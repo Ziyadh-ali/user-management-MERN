@@ -4,6 +4,7 @@ import User from "../model/userModel.js"
 import bcrypt from "bcrypt"
 import cloudinary from "../config/cloudinary.js"
 import jwt from "jsonwebtoken"
+import { hash } from "crypto";
 
 const securePassword = async (password) => {
     try {
@@ -16,7 +17,7 @@ const securePassword = async (password) => {
 
 const register = async (req, res) => {
     try {
-        const { name, email, password, confirmPass } = req.body;
+        const { name, email, password } = req.body;
         const profilePhoto = req.file;
         const user = await User.findOne({ email });
 
@@ -88,13 +89,44 @@ const login = async (req, res) => {
             message: "Login Successfull"
         })
     } catch (error) {
-        console.log("errrorororoor", error);
+        console.log("Login Error", error);
     }
 }
 
 const editUser = async (req, res) => {
     try {
-        console.log("i am in edit ")
+        const { name, password } = req.body;
+        const profilePhoto = req.file ? req.file : null
+        const user = await User.findById(req.user.id);
+        let hashedPassword = user.password;
+        if (password) {
+            hashedPassword = await bcrypt.hash(password, 10)
+        }
+
+        user.name = name;
+        user.password = hashedPassword
+        if (profilePhoto) {
+            cloudinary.uploader.upload(profilePhoto.path, {
+                folder: 'profile_photos'
+            })
+                .then(async (result) => {
+                    const profilePhotoUrl = result.secure_url;
+                    user.profilePhoto = profilePhotoUrl
+                    user.save();
+                    return res.status(201).json({
+                        message: "Profile updated successfully",
+                        user
+                    });
+                })
+                .catch((error) => {
+                    console.log(error);
+                })
+        } else {
+            user.save();
+            return res.status(200).json({ message: "Profile updated successfully", user });
+        }
+
+
     } catch (error) {
         console.log(error);
     }

@@ -1,12 +1,15 @@
 import React, { useState } from "react";
 import "./Edit.css";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import axios from "../../../config/axios";
+import { addUser } from "../../../redux/userSlice";
+
 
 function Edit() {
     const user = useSelector((state) => state.userSlice.users);
     const navigate = useNavigate();
+    const dispatch = useDispatch()
 
     const [name, setName] = useState(user.name);
     const [email, setEmail] = useState(user.email);
@@ -28,16 +31,6 @@ function Edit() {
         if (file) {
             setPreviewProfile(URL.createObjectURL(file));
             setProfilePhoto(file);
-
-            // Validate Image
-            const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
-            if (!allowedTypes.includes(file.type)) {
-                setErrors((prev) => ({ ...prev, profilePhoto: "Only JPEG, PNG, and JPG formats are allowed." }));
-            } else if (file.size > 2 * 1024 * 1024) {
-                setErrors((prev) => ({ ...prev, profilePhoto: "File size must be less than 2MB." }));
-            } else {
-                setErrors((prev) => ({ ...prev, profilePhoto: "" }));
-            }
         }
     }
 
@@ -55,6 +48,14 @@ function Edit() {
         } else if (!nameRegex.test(name.trim())) {
             newErrors.name = "Name can only contain letters and spaces.";
             valid = false;
+        }
+        if (profilePhoto) {
+            const validImageTypes = ["image/jpeg", "image/png", "image/jpg", "image/gif", "image/webp"];
+
+            if (!validImageTypes.includes(profilePhoto.type)) {
+                newErrors.profilePhoto = "Only JPG, JPEG, PNG, and GIF files are allowed.";
+                valid = false;
+            }
         }
 
         // Validate Password
@@ -79,15 +80,17 @@ function Edit() {
         try {
             const formData = new FormData();
             formData.append("name", name);
-            formData.append("email", email);
             if (password) formData.append("password", password);
             if (profilePhoto) formData.append("profilePhoto", profilePhoto);
 
-            await axios.post("/edit-user", formData, {
+            const response = await axios.post("/edit-user", formData, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
-
-            navigate("/");
+            if (response) {
+                alert(response?.data?.message);
+                dispatch(addUser(response.data.user));
+                navigate("/");
+            }
         } catch (error) {
             console.error("Error updating profile:", error);
         }
@@ -158,7 +161,7 @@ function Edit() {
                             <button type="submit" className="save-button">
                                 Save Changes
                             </button>
-                            <button onClick={() => navigate("/")} className="cancel-button">
+                            <button type="button" onClick={() => navigate("/")} className="cancel-button">
                                 Cancel
                             </button>
                         </form>
