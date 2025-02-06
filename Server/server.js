@@ -21,6 +21,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 //////////////////////
 import userRoute from "./routes/userRoute.js"
 app.use('/',userRoute);
+import adminRoute from "./routes/adminRoute.js"
+app.use('/admin',adminRoute);
 
 app.listen('3000',()=>{
     console.log('server runnning successfully');

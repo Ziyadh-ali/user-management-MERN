@@ -4,7 +4,6 @@ import User from "../model/userModel.js"
 import bcrypt from "bcrypt"
 import cloudinary from "../config/cloudinary.js"
 import jwt from "jsonwebtoken"
-import { hash } from "crypto";
 
 const securePassword = async (password) => {
     try {
@@ -77,11 +76,11 @@ const login = async (req, res) => {
         const userData = {
             name: user.name,
             email: user.email,
-            profilePhoto: user.profilePhoto,
+            profilePhoto: user.profilePhoto, 
         }
 
         const token = jwt.sign({ id: user._id }, process.env.ACCESS_SECRET, { expiresIn: "15m" });
-        const refreshToken = jwt.sign({ id: user._id }, process.env.REFRESH_SECRET, { expiresIn: "30m" });
+        const refreshToken = jwt.sign({ id: user._id }, process.env.REFRESH_SECRET, { expiresIn: "1h" });
         res.status(200).json({
             userData,
             token,
@@ -145,7 +144,7 @@ const newAccessToken = (req, res) => {
             }
 
             const newAccessToken = jwt.sign(
-                { id: user.id, email: user.email },
+                { id: user.id},
                 process.env.ACCESS_SECRET,
                 { expiresIn: "15m" }
             );

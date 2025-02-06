@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import './signup.css';
 import axios from "../../../config/axios";
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const SignupPage = () => {
     const [name, setName] = useState("");
@@ -77,12 +78,12 @@ const SignupPage = () => {
                 headers: { "Content-Type": "multipart/form-data" },
             });
             if (response) {
-                alert("Signup successful! Please log in.");
+                toast.success("Signup successful! Please log in.");
                 navigate('/login')
             }
         } catch (error) {
             console.error("Signup error:", error);
-            alert(error.response.data.message);
+            toast.error(error.response.data.message);
         }
     };
 

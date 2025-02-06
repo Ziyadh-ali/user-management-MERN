@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom"
 import axios from "../../../config/axios"
 import { addUser } from "../../../redux/userSlice"
 import { useDispatch } from "react-redux"
+import { toast } from "react-toastify"
 
 function LoginPage() {
     const [email, setEmail] = useState("")
@@ -22,12 +23,12 @@ function LoginPage() {
                 localStorage.setItem('accessToken', token);
                 localStorage.setItem('refreshToken', refreshToken);
                 dispatch(addUser(user))
-                alert(response.data.message);
+                toast.success(response.data.message);
                 navigate("/");
             }
         } catch (error) {
             console.log(error);
-            alert( "hello",error)
+            toast.error(error.response.data.message)
         }
     }
 

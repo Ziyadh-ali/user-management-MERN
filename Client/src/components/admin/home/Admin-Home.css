@@ -1,0 +1,144 @@
+.admin-dashboard {
+    font-family: Arial, sans-serif;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.admin-title {
+    font-size: 24px;
+    margin: 0;
+}
+
+.admin-logout-btn {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.admin-main {
+    background-color: #f5f5f5;
+    padding: 20px;
+    border-radius: 5px;
+}
+
+.admin-user-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.admin-user-list-title {
+    font-size: 20px;
+    margin: 0;
+}
+
+.admin-add-user-btn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.admin-user-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.admin-user-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    border-radius: 3px;
+}
+
+/* Ensure the user details and buttons align properly */
+.admin-user-info {
+    display: flex;
+    align-items: center;
+}
+
+.admin-user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 15px;
+}
+
+.admin-user-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-user-name {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.admin-user-email {
+    font-size: 14px;
+    color: #666;
+}
+
+/* Fix alignment of buttons */
+.admin-user-actions {
+    display: flex;
+    gap: 10px; /* Space between buttons */
+    align-items: center; /* Ensures both buttons are aligned properly */
+}
+
+.admin-edit-user-btn,
+.admin-remove-user-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 60px; /* Ensures uniform width */
+    height: 30px; /* Ensures both buttons have the same height */
+    padding: 5px 12px;
+    text-align: center;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.admin-remove-user-btn {
+    background-color: #ff9800;
+    color: white;
+}
+
+.admin-edit-user-btn {
+    background-color: yellow;
+    color: black;
+}
+
+.admin-user-list-header input {
+    padding: 8px 12px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    outline: none;
+    width: 200px; /* Adjust width as needed */
+    transition: border-color 0.3s ease-in-out;
+}
+
+.admin-user-list-header input:focus {
+    border-color: #4CAF50; /* Highlight border on focus */
+    box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+}
+

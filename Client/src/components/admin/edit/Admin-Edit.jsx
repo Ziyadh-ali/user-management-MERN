@@ -1,33 +1,35 @@
-import React, { useState } from "react";
-import "./Edit.css";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import axios from "../../../config/axios";
-import { addUser } from "../../../redux/userSlice";
-import { toast } from "react-toastify";
+import React, { useEffect, useState } from 'react'
+import "./Admin-Edit.css";
+import { useNavigate, useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import axios from "../../../config/adminAxios"
+import { toast } from 'react-toastify';
 
-
-function Edit() {
-    const user = useSelector((state) => state.userSlice.users);
+const AdminEdit = () => {
     const navigate = useNavigate();
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
+    const { id } = useParams()
 
-    const [name, setName] = useState(user.name);
-    const [email, setEmail] = useState(user.email);
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPass, setConfirmPass] = useState("");
     const [profilePhoto, setProfilePhoto] = useState(null);
-    const [previewProfile, setPreviewProfile] = useState(user.profilePhoto);
+    const [previewProfile, setPreviewProfile] = useState(null);
+    const [errors, setErrors] = useState({});
 
-    // Validation state
-    const [errors, setErrors] = useState({
-        name: "",
-        password: "",
-        confirmPass: "",
-        profilePhoto: "",
-    });
+    useEffect(() => {
+        const fetchDetails = async () => {
+            const response = await axios.get(`/get-user/${id}`);
+            const user = response.data.user;
+            setName(user.name);
+            setEmail(user.email);
+            setPreviewProfile(user.profilePhoto);
+        }
+        fetchDetails();
+    }, [id]);
 
-    function handleImageChange(e) {
+    const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
             setPreviewProfile(URL.createObjectURL(file));
@@ -41,7 +43,6 @@ function Edit() {
         let valid = true;
         let newErrors = { name: "", password: "", confirmPass: "", profilePhoto: "" };
 
-        // Validate Name (Only letters and spaces)
         const nameRegex = /^[A-Za-z\s]+$/;
         if (!name.trim()) {
             newErrors.name = "Name is required.";
@@ -81,29 +82,30 @@ function Edit() {
         try {
             const formData = new FormData();
             formData.append("name", name);
+            formData.append("id", id);
+            if (password) formData.append("password", password);
             if (password) formData.append("password", password);
             if (profilePhoto) formData.append("profilePhoto", profilePhoto);
-
+            
             const response = await axios.post("/edit-user", formData, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
             if (response) {
                 toast.success(response?.data?.message);
-                dispatch(addUser(response.data.user));
-                navigate("/");
+                navigate("/admin/home");
             }
         } catch (error) {
             console.error("Error updating profile:", error);
-            toast.error("Error in editing")
+            toast.error("Error editing user")
         }
-    };
+    }
 
     return (
         <>
             <div className="edit-container">
                 <div className="edit-profile-container">
                     <header className="edit-profile-header">
-                        <h1>Edit Profile</h1>
+                        <h1>Edit User</h1>
                     </header>
                     <main className="edit-profile-main">
                         <form onSubmit={handleSubmit} className="edit-profile-form">
@@ -160,12 +162,14 @@ function Edit() {
                                 {errors.confirmPass && <p className="error">{errors.confirmPass}</p>}
                             </div>
 
-                            <button type="submit" className="save-button">
-                                Save Changes
-                            </button>
-                            <button type="button" onClick={() => navigate("/")} className="cancel-button">
-                                Cancel
-                            </button>
+                            <div>
+                                <button type="submit" className="save-button">
+                                    Save Changes
+                                </button>
+                                <button type="button" onClick={() => navigate("/admin/home")} className="cancel-button">
+                                    Cancel
+                                </button>
+                            </div>
                         </form>
                     </main>
                     <footer className="edit-profile-footer">
@@ -177,4 +181,4 @@ function Edit() {
     );
 }
 
-export default Edit;
+export default AdminEdit

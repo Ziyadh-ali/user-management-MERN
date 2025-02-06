@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { logout } from '../../../redux/userSlice'
 import "./Home.css";
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 function Home() {
     const user = useSelector((state) => state.userSlice.users);
@@ -10,6 +11,7 @@ function Home() {
     const dispatch = useDispatch();
     function handleLogout() {
         dispatch(logout())
+        toast.success("Logout successfull");
         navigate('/login')
     }
     return (
